@@ -10,3 +10,5 @@ escrito por vários autores.
 jogador joga apenas em uma equipe.
 5. Um cliente realiza várias encomendas. Uma
 encomenda diz respeito apenas a um cliente.
+
+![Respostas](../aula5/respostas.png)
