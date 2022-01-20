@@ -1,2 +1,2 @@
 id = input()
-print('SELECT * FROM carro WHERE id = %s', id)
+print('SELECT * FROM carro WHERE id = ', id)

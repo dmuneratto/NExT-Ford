@@ -87,7 +87,8 @@ if __name__ == '__main__':
                 'valor': valor
             })
         elif option == 2:
-            marca = input('Digite o modelo do carro que quer alterar: ')
+            id = input('Digite o id do carro que quer alterar: ')
+            update_car(connector, id)
         elif option == 3:
             carro = input('Digite o modelo do carro que quer exibir: ')
             print(search_car(connector,carro))
@@ -102,3 +103,4 @@ if __name__ == '__main__':
         else:
                 print('Digite uma opção valida, na proxima vez!')
     desconnect(connector)
+
