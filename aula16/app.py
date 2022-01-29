@@ -82,6 +82,9 @@ class PlateResource(Resource):
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('name', type=ascii,help='recurso não enviado, prfv mande um nome')
+        parser.add_argument('price', type=float)
+        parser.add_argument('category_id', type=int)
+
         args = parser.parse_args()
 
         plate = Plate(**args)
@@ -109,10 +112,22 @@ class CategoryResource(Resource):
     def get(self):
         categories = Category.query.all() or abort(404, description="Resource not found")
         return jsonify(
-            {"Categories": [category.to_dict() for category in categories]}
+            {"Categories": [category.to_dict() for category in categories]})
+    
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('name', type=ascii,help='recurso não enviado, prfv mande um nome')
+        args = parser.parse_args()
+
+        category = Category(**args)
+        db.session.add(category)
+        db.session.commit()
+
+        return jsonify({"success": True, "response": "Category added"})
+
                        
             
-        )
+        
 
 class OrderResource(Resource):
     def get(self):
