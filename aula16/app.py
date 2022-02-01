@@ -54,7 +54,7 @@ class Plate(db.Model, SerializerMixin):
         return '<Plate %r>' % self.name
 
 class Category(db.Model, SerializerMixin):
-    serialize_rules = ('-plate.category',)
+    serialize_rules = ('-plate',)
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     plate = db.relationship(
@@ -174,7 +174,8 @@ api.add_resource(OrderResource,"/Orders")
 
 @app.route('/Cadastra')
 def registerplate():
-    return render_template("newplate.html")
+    categories = Category.query.all() or abort(404, description="Resource not found")
+    return render_template("newplate.html",categories=categories)
 
 
 if __name__ == '__main__':
