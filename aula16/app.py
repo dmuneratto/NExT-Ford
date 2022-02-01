@@ -3,7 +3,7 @@ import os
 
 from datetime import datetime
 from unicodedata import category, name
-from flask import Flask , abort, jsonify
+from flask import Flask , abort, jsonify, render_template
 from flask_restful import Api, Resource, reqparse
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
@@ -17,9 +17,30 @@ api = Api(app)
 
 db = SQLAlchemy(app)
 
+# class Customer(db.Model, SerializerMixin):
+#     
+#     serialize_rules = ('-category','-orders.plate','-id', '-category_id')
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(50), nullable=False)
+#     address = db.Column(db.String(50), nullable=True)
+#     phone =  db.Column(db.String(50), nullable=True)
+#           
+# 
+# 
+# category_id = db.Column(db.Integer, db.ForeignKey(
+#         'category.id', ondelete="CASCADE"), nullable=False)
+#     category = db.relationship(
+#         'Category', back_populates='plate')
+#     orders = db.relationship("PlateOrder", backref="plate")
+
+#     def __repr__(self):
+#         return '<Plate %r>' % self.name
+
+
 
 class Plate(db.Model, SerializerMixin):
-    serializ_rules = ('-category','-orders')
+    #serialize_rules = ('-category.plate','-orders.plate',)
+    serialize_rules = ('-category','-orders.plate','-id', '-category_id')
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     price = db.Column(db.Float(2), nullable=False)
@@ -33,7 +54,7 @@ class Plate(db.Model, SerializerMixin):
         return '<Plate %r>' % self.name
 
 class Category(db.Model, SerializerMixin):
-    serialize_rules = ('-plate',)
+    serialize_rules = ('-plate.category',)
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     plate = db.relationship(
@@ -48,7 +69,8 @@ class Category(db.Model, SerializerMixin):
     def __repr__(self):
         return '<Category %r>' % self.name
 
-class Order(db.Model, SerializerMixin):
+class Orders(db.Model, SerializerMixin):
+    serialize_rules = ('-plate.orders','-plate.plate.orders','-plate.order_id', '-plate.id')
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.Integer, nullable=False, unique=True)
     timestamp = db.Column(
@@ -62,8 +84,11 @@ class Order(db.Model, SerializerMixin):
 class PlateOrder(db.Model, SerializerMixin):
     __tablename__ = 'plate_order'
     plate_id = db.Column(db.ForeignKey('plate.id'), primary_key=True)
-    order_id = db.Column(db.ForeignKey('order.id'), primary_key=True)
+    order_id = db.Column(db.ForeignKey('orders.id'), primary_key=True)
     amount = db.Column(db.Integer, nullable=False)
+
+
+
 
 @app.before_first_request
 def create_db():
@@ -131,7 +156,7 @@ class CategoryResource(Resource):
 
 class OrderResource(Resource):
     def get(self):
-        orders = Order.query.all() or abort(404, description="Resource not found")
+        orders = Orders.query.all() or abort(404, description="Resource not found")
         return jsonify(
             {"Order": [order.to_dict() for order in orders]}
         )
@@ -145,6 +170,12 @@ def welcome():
 api.add_resource(PlateResource,"/Plates")
 api.add_resource(PlateSearchResource,"/PlatesSearch")
 api.add_resource(CategoryResource,"/Category")
+api.add_resource(OrderResource,"/Orders")
+
+@app.route('/Cadastra')
+def registerplate():
+    return render_template("newplate.html")
+
 
 if __name__ == '__main__':
     app.run(debug=True)

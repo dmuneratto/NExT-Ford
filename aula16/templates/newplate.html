@@ -1,21 +1,21 @@
 {% extends "template.html" %}
 
 {% block conteudo %}
-<form action="{{url_for('Plates')}}" method="post">
+<form action="{{url_for('plateresource')}}" method="post">
     <fieldset>
         <div class="from-group">
-            <label for="Nome">Nome</label>
+            <label for="name">Nome</label>
             <input type="text" id="name" name="name" class="from-control">
         </div>
         <div class="from-group">
-            <label for="preco">Preco</label>
-            <input type="text" id="preco" name="preco" class="from-control">
+            <label for="price">Preco</label>
+            <input type="text" id="price" name="price" class="from-control">
         </div>
         <div class="from-group">
-            <label for="categpry">Category</label>
-            <input type="text" id="category" name="category" class="from-control">
+            <label for="category_id">Categoria</label>
+            <input type="text" id="category_id" name="category_id" class="from-control">
         </div>
-        <button type="submit" class="btn btn-primary">Cadastra novo Carro</button>
+        <button type="submit" class="btn btn-primary">Cadastra novo prato</button>
     </fieldset>
 </form>
 {% endblock %}
